@@ -22,7 +22,7 @@ namespace FileAnalyzerWithForm
             cboType.SelectedIndexChanged += (s, e) => btnUpload.Enabled = cboType.SelectedIndex >= 0;
             cboType.Items.AddRange(new string[] { "TXT", "DOCX", "PDF" });  
             btnUpload.Enabled = false;  
-            progressBar.Visible = false;
+            
 
             cboType.SelectedIndexChanged += (s, e) =>
             {
@@ -65,7 +65,7 @@ namespace FileAnalyzerWithForm
                 }
                 try
                 {
-                    progressBar.Visible = true;
+                    
                     IFileReader reader = FileReaderFactory.Create(dlg.FileName, _loggerFactory);
                     string content = reader.ReadContent(dlg.FileName) ?? string.Empty;
 
@@ -95,7 +95,9 @@ namespace FileAnalyzerWithForm
                 }
                 finally
                 {
-                    progressBar.Visible = false;
+                    btnUpload.Enabled = true;
+                    cboType.Enabled = true;
+                    UseWaitCursor = false;
                 }
             }
 
@@ -116,9 +118,6 @@ namespace FileAnalyzerWithForm
             }
         }
 
-        private void progressBar_Click(object sender, EventArgs e)
-        {
-
-        }
+    
     }
 }

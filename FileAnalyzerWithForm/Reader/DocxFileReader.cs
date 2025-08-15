@@ -1,32 +1,50 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
+using FileAnalyzerWithForm;
+using Microsoft.Extensions.Logging;
 using System;
-using Xceed.Words.NET;
+using System.Linq;
+using System.Text;
 
-namespace FileAnalyzerWithForm.Reader
+namespace FileAnalyzer_.Reader
 {
-    public class DocxFileReader: IFileReader
+    public class DocxFileReader : IFileReader
     {
         private readonly ILogger<DocxFileReader> _logger;
-        public DocxFileReader(ILogger<DocxFileReader> logger)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
+        public DocxFileReader(ILogger<DocxFileReader> logger) => _logger = logger;
 
         public string ReadContent(string filePath)
         {
             try
             {
-               using (var doc = DocX.Load(filePath))
+                var sb = new StringBuilder();
+
+                using (var word = WordprocessingDocument.Open(filePath, false))
                 {
-                    var text  = doc.Text;
-                    _logger.LogInformation("DOCX okundu: {File}", filePath);
-                    return text;
+                    // Ana gövde
+                    var body = word.MainDocumentPart?.Document?.Body;
+                    if (body != null)
+                        foreach (var p in body.Elements<Paragraph>())
+                            sb.AppendLine(p.InnerText);
+
+                    // Header/Footer (varsa)
+                    foreach (var hp in word.MainDocumentPart.HeaderParts)
+                        foreach (var p in hp.RootElement.Descendants<Paragraph>())
+                            sb.AppendLine(p.InnerText);
+
+                    foreach (var fp in word.MainDocumentPart.FooterParts)
+                        foreach (var p in fp.RootElement.Descendants<Paragraph>())
+                            sb.AppendLine(p.InnerText);
                 }
+
+                var text = sb.ToString();
+                _logger.LogInformation("DOCX okundu: {File}", filePath);
+                return text;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "DOCX okunamadı: {File}", filePath);
-                throw; 
+                throw;
             }
         }
     }
