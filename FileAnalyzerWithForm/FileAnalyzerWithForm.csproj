@@ -157,7 +157,6 @@
     <Compile Include="Auth\EfUserService.cs" />
     <Compile Include="Auth\FileAnalyzerContext.cs" />
     <Compile Include="Auth\IUserService.cs" />
-    <Compile Include="Auth\PasswordHasher.cs" />
     <Compile Include="InterFace\IFileReader.cs" />
     <Compile Include="LoginForm.cs">
       <SubType>Form</SubType>
@@ -195,6 +194,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -212,6 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
+    <None Include="Resources\bursaspor.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Serilog.4.3.0\build\Serilog.targets" Condition="Exists('..\packages\Serilog.4.3.0\build\Serilog.targets')" />

@@ -3,8 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Extensions.Logging;
-using FileAnalyzerWithForm.Auth;  
+using FileAnalyzerWithForm.Auth;
 
 namespace FileAnalyzerWithForm
 {
@@ -34,7 +33,7 @@ namespace FileAnalyzerWithForm
             {
                 appLogger.LogInformation("Uygulama başladı.");
 
-             
+
                 using (var db = new FileAnalyzerContext())
                 {
                     db.Database.Initialize(false);

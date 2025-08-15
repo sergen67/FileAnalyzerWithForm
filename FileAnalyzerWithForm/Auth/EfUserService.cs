@@ -1,52 +1,68 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace FileAnalyzerWithForm.Auth
 {
     public class EfUserService : IUserService
     {
+        private readonly ILogger _logger;
+
+        public EfUserService() { }
+        public EfUserService(ILogger<EfUserService> logger) { _logger = logger; }
+
         public bool TryRegister(string username, string password, out string error)
         {
             error = null;
             username = (username ?? "").Trim();
+
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(password))
             { error = "Kullanıcı adı/şifre boş olamaz."; return false; }
 
-            using (var db = new FileAnalyzerContext())
+            try
             {
-                if (db.Users.Any(u => u.Username == username))
-                { error = "Bu kullanıcı zaten kayıtlı."; return false; }
-
-                PasswordHasher.Create(password, out var hash, out var salt, out var iter);
-
-                db.Users.Add(new UserRecord
+                using (var db = new FileAnalyzerContext())
                 {
-                    Username = username,
-                    PasswordHash = hash,
-                    Salt = salt,
-                    Iterations = iter,
-                    CreatedAt = DateTime.UtcNow
-                });
-                db.SaveChanges();
+                    bool exists = db.Users.Any(u => u.Username == username);
+                    if (exists) { error = "Bu kullanıcı zaten kayıtlı."; return false; }
+
+                    db.Users.Add(new UserRecord
+                    {
+                        Username = username,
+                        Password = password   
+                    });
+                    db.SaveChanges();
+                }
+                _logger?.LogInformation("Register OK: {User}", username);
                 return true;
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Register FAIL: {User}", username);
+                error = "Kayıt sırasında hata oluştu.";
+                return false;
             }
         }
 
         public bool TryLogin(string username, string password)
         {
             username = (username ?? "").Trim();
-            using (var db = new FileAnalyzerContext())
-            {
-                var user = db.Users.SingleOrDefault(u => u.Username == username);
-                if (user == null) return false;
 
-                var ok = PasswordHasher.Verify(password, user.PasswordHash, user.Salt, user.Iterations);
-                if (ok)
+            try
+            {
+                using (var db = new FileAnalyzerContext())
                 {
-                    user.LastLoginAt = DateTime.UtcNow;
-                    db.SaveChanges();
+                   
+                    var ok = db.Users.Any(u => u.Username == username && u.Password == password);
+                    if (!ok) _logger?.LogWarning("Login FAIL: {User}", username);
+                    else _logger?.LogInformation("Login OK: {User}", username);
+                    return ok;
                 }
-                return ok;
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Login ERROR: {User}", username);
+                return false;
             }
         }
     }
