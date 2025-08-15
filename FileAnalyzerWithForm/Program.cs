@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
-using System.IO;
 using Serilog;
-namespace FileAnalyzerWithForm
+using Serilog.Extensions.Logging;
+using FileAnalyzerWithForm.Auth;  
 
+namespace FileAnalyzerWithForm
 {
     internal static class Program
     {
@@ -18,34 +20,47 @@ namespace FileAnalyzerWithForm
             Directory.CreateDirectory(logsDir);
 
             Log.Logger = new LoggerConfiguration()
-              .MinimumLevel.Information()
-              .WriteTo.File(Path.Combine(logsDir, "app-.txt"),
-                            rollingInterval: RollingInterval.Day,
-                            retainedFileCountLimit: 7,
-                            shared: true)
-              .CreateLogger();
+                .MinimumLevel.Information()
+                .WriteTo.File(Path.Combine(logsDir, "app-.txt"),
+                              rollingInterval: RollingInterval.Day,
+                              retainedFileCountLimit: 7,
+                              shared: true)
+                .CreateLogger();
 
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddSerilog(dispose: true);
-            });
-
+            var loggerFactory = LoggerFactory.Create(b => b.AddSerilog(dispose: true));
             var appLogger = loggerFactory.CreateLogger("Program");
-            appLogger.LogInformation("Uygulama başladı.");
-            using (var login = new LoginForm())
+
+            try
             {
-                if (login.ShowDialog() != DialogResult.OK)
+                appLogger.LogInformation("Uygulama başladı.");
+
+             
+                using (var db = new FileAnalyzerContext())
                 {
-                    Log.CloseAndFlush();
-                    return;
+                    db.Database.Initialize(false);
                 }
+
+                var userService = new EfUserService();
+
+                
+                using (var login = new LoginForm(userService, loggerFactory.CreateLogger<LoginForm>()))
+                {
+                    if (login.ShowDialog() != DialogResult.OK)
+                    {
+                        appLogger.LogInformation("Login iptal edildi.");
+                        return;
+                    }
+                    appLogger.LogInformation("Login OK.");
+                }
+
+                
+                var mainLogger = loggerFactory.CreateLogger<MainForm>();
+                Application.Run(new MainForm(mainLogger, loggerFactory));
             }
-            var mainLogger = loggerFactory.CreateLogger<MainForm>();
-            Application.Run(new MainForm(mainLogger, loggerFactory));
-
-
-            Log.CloseAndFlush();
-
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
     }
 }

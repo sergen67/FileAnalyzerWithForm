@@ -16,7 +16,7 @@ namespace FileAnalyzerWithForm
         public MainForm(ILogger<MainForm> mainLogger, ILoggerFactory loggerFactory)
         {
             InitializeComponent();
-       
+
             cboType.DropDownStyle = ComboBoxStyle.DropDownList;
             cboType.Items.Clear();
             cboType.Items.AddRange(new object[] { "TXT", "DOCX", "PDF" });
@@ -57,8 +57,8 @@ namespace FileAnalyzerWithForm
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
 
             cboType.SelectedIndexChanged += (s, e) => btnUpload.Enabled = cboType.SelectedIndex >= 0;
-            btnUpload.Enabled = false;  
-            
+            btnUpload.Enabled = false;
+
 
             cboType.SelectedIndexChanged += (s, e) =>
             {
@@ -107,7 +107,7 @@ namespace FileAnalyzerWithForm
 
                     var res = TextAnalyzer.Analyze(content);
 
-                    // 1) Kelimeler (>=2) çoktan aza
+
                     var words = res.TopWords
                                    .Where(w => w.Count >= 2)
                                    .OrderByDescending(w => w.Count)
@@ -115,7 +115,6 @@ namespace FileAnalyzerWithForm
                                    .ToList();
                     gridWords.DataSource = words;
 
-                    // 2) Noktalama çoktan aza
                     var punc = res.PunctuationCounts
                                   .OrderByDescending(kv => kv.Value)
                                   .Select(kv => new PuncItem { Symbol = kv.Key, Count = kv.Value })
@@ -147,7 +146,7 @@ namespace FileAnalyzerWithForm
 
         private string BuildFilter(string ext)
         {
-            switch((ext ?? "").ToLowerInvariant())
+            switch ((ext ?? "").ToLowerInvariant())
             {
                 case "txt":
                     return "Metin Dosyaları (*.txt)|*.txt";
@@ -160,6 +159,6 @@ namespace FileAnalyzerWithForm
             }
         }
 
-    
+
     }
 }
