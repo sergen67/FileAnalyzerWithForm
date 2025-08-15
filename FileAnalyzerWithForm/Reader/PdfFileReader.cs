@@ -1,0 +1,37 @@
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Text;
+using UglyToad.PdfPig;
+
+namespace FileAnalyzerWithForm.Reader
+{
+    public class PdfFileReader : IFileReader
+    {
+        private readonly ILogger<PdfFileReader> _logger;
+        public PdfFileReader(ILogger<PdfFileReader> logger)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+        public string ReadContent(string filePath)
+        {
+            try
+            {
+                var sb = new StringBuilder();
+                using(var pdf = PdfDocument.Open(filePath))
+                {
+                    foreach (var page in pdf.GetPages())
+                    {
+                        sb.AppendLine(page.Text);
+                    }
+                }
+                _logger.LogInformation("PDF okundu: {File}", filePath);
+                return sb.ToString();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "PDF okunamadı: {File}", filePath);
+                throw; 
+            }
+        }
+    }
+}
