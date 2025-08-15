@@ -154,9 +154,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Auth\EfUserService.cs" />
-    <Compile Include="Auth\FileAnalyzerContext.cs" />
-    <Compile Include="Auth\IUserService.cs" />
+    <Compile Include="InterFace\ILoginService.cs" />
+    <Compile Include="Services\FileAnalyzerContext.cs" />
+    <Compile Include="InterFace\IUserService.cs" />
     <Compile Include="InterFace\IFileReader.cs" />
     <Compile Include="LoginForm.cs">
       <SubType>Form</SubType>

@@ -17,67 +17,13 @@ namespace FileAnalyzerWithForm
         {
             InitializeComponent();
 
-            cboType.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboType.Items.Clear();
-            cboType.Items.AddRange(new object[] { "TXT", "DOCX", "PDF" });
+
             btnUpload.Enabled = false;
-            cboType.SelectedIndexChanged += (s, e) => btnUpload.Enabled = cboType.SelectedIndex >= 0;
-            btnUpload.Click += btnUpload_Click;
             gridWords.AutoGenerateColumns = false;
-            gridWords.Columns.Clear();
-            gridWords.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Kelime",
-                DataPropertyName = "Word"
-            });
-            gridWords.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Sayı",
-                DataPropertyName = "Count",
-                Width = 80,
-                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight }
-            });
-            gridPunc.AutoGenerateColumns = false;
-            gridPunc.Columns.Clear();
-            gridPunc.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = "İşaret",
-                DataPropertyName = "Symbol",
-                Width = 80
-            });
-            gridPunc.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Sayı",
-                DataPropertyName = "Count",
-                Width = 80,
-                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight }
-            });
+           
 
             _logger = mainLogger ?? throw new ArgumentNullException(nameof(mainLogger));
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-
-            cboType.SelectedIndexChanged += (s, e) => btnUpload.Enabled = cboType.SelectedIndex >= 0;
-            btnUpload.Enabled = false;
-
-
-            cboType.SelectedIndexChanged += (s, e) =>
-            {
-                if (cboType.SelectedIndex >= 0)
-                {
-                    btnUpload.Enabled = true;
-                }
-                else
-                {
-                    btnUpload.Enabled = false;
-                }
-            };
-            btnUpload.Click += btnUpload_Click;
-
-
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
 
         }
 
@@ -114,6 +60,7 @@ namespace FileAnalyzerWithForm
                                    .ThenBy(w => w.Word)
                                    .ToList();
                     gridWords.DataSource = words;
+
 
                     var punc = res.PunctuationCounts
                                   .OrderByDescending(kv => kv.Value)
@@ -159,6 +106,17 @@ namespace FileAnalyzerWithForm
             }
         }
 
+        private void cboType_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
+            if (cboType.SelectedIndex >= 0)
+            {
+                btnUpload.Enabled = true;
+            }
+            else
+            {
+                btnUpload.Enabled = false;
+            }
+        }
     }
 }
