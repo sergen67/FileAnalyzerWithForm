@@ -17,12 +17,10 @@ namespace FileAnalyzerWithForm
 
         }
 
-        // ... existing code ...
-
         private void btn_Click(object sender, EventArgs e)
         {
             string username = txtUserName.Text.Trim();
-            string password = txtPassword.Text; // (PBKDF2 hash'e geçeceksen burayı değiştireceğiz)
+            string password = txtPassword.Text;
 
             using (var con = new SqlConnection("Data Source=DESKTOP-OBIK10F;Initial Catalog=Users;Integrated Security=True"))
             using (var cmd = new SqlCommand(
@@ -36,7 +34,6 @@ namespace FileAnalyzerWithForm
                 if (count > 0)
                 {
                     MessageBox.Show("Giriş başarılı!");
-                    // ✅ Sadece OK dön ve formu kapat
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
@@ -47,5 +44,9 @@ namespace FileAnalyzerWithForm
             }
         }
 
+        private void txtUserName_TextChanged(object sender, EventArgs e)
+        {
+       
+        }
     }
 }

@@ -16,11 +16,47 @@ namespace FileAnalyzerWithForm
         public MainForm(ILogger<MainForm> mainLogger, ILoggerFactory loggerFactory)
         {
             InitializeComponent();
+       
+            cboType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboType.Items.Clear();
+            cboType.Items.AddRange(new object[] { "TXT", "DOCX", "PDF" });
+            btnUpload.Enabled = false;
+            cboType.SelectedIndexChanged += (s, e) => btnUpload.Enabled = cboType.SelectedIndex >= 0;
+            btnUpload.Click += btnUpload_Click;
+            gridWords.AutoGenerateColumns = false;
+            gridWords.Columns.Clear();
+            gridWords.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Kelime",
+                DataPropertyName = "Word"
+            });
+            gridWords.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Sayı",
+                DataPropertyName = "Count",
+                Width = 80,
+                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight }
+            });
+            gridPunc.AutoGenerateColumns = false;
+            gridPunc.Columns.Clear();
+            gridPunc.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "İşaret",
+                DataPropertyName = "Symbol",
+                Width = 80
+            });
+            gridPunc.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Sayı",
+                DataPropertyName = "Count",
+                Width = 80,
+                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight }
+            });
+
             _logger = mainLogger ?? throw new ArgumentNullException(nameof(mainLogger));
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
 
             cboType.SelectedIndexChanged += (s, e) => btnUpload.Enabled = cboType.SelectedIndex >= 0;
-            cboType.Items.AddRange(new string[] { "TXT", "DOCX", "PDF" });  
             btnUpload.Enabled = false;  
             
 
@@ -49,11 +85,11 @@ namespace FileAnalyzerWithForm
         {
             var ext = (string)cboType.SelectedItem ?? "TXT";
 
-            using(var dlg = new OpenFileDialog
+            using (var dlg = new OpenFileDialog
             {
                 Filter = BuildFilter(ext),
-                Title = "Dosya Seçin",  
-                DefaultExt = $"{ext.ToLowerInvariant()} Dosya Seçiniz" ,
+                Title = $"{ext} dosyası seçiniz",
+                DefaultExt = ext.ToLowerInvariant(),   // "txt" / "docx" / "pdf"
                 CheckFileExists = true,
                 Multiselect = false
             })
@@ -63,35 +99,36 @@ namespace FileAnalyzerWithForm
                     _logger.LogInformation("Dosya seçimi iptal edildi.");
                     return;
                 }
+
                 try
                 {
-                    
                     IFileReader reader = FileReaderFactory.Create(dlg.FileName, _loggerFactory);
                     string content = reader.ReadContent(dlg.FileName) ?? string.Empty;
 
                     var res = TextAnalyzer.Analyze(content);
-                    var words = res.TopWords.Where(w => w.Count >= 2).ToList();
 
-                    txtOutPut.Clear();
-                    txtOutPut.AppendText($"Dosya: {dlg.FileName}\n");
-                    txtOutPut.AppendText($"Kelime Sayısı: {res.DistinctWordCount}\n");
-                    txtOutPut.AppendText("En Sık Kullanılan Kelimeler:\n");
-                    foreach (var wc in words)
-                    {
-                        txtOutPut.AppendText($"- {wc.Word}: {wc.Count}\n");
-                    }
-                    txtOutPut.AppendText("\nNoktalama İşaretleri:\n");
-                    foreach (var kvp in res.PunctuationCounts.OrderByDescending(k => k.Value))
-                    {
-                        txtOutPut.AppendText($"- {kvp.Key}: {kvp.Value}\n");
-                    }
+                    // 1) Kelimeler (>=2) çoktan aza
+                    var words = res.TopWords
+                                   .Where(w => w.Count >= 2)
+                                   .OrderByDescending(w => w.Count)
+                                   .ThenBy(w => w.Word)
+                                   .ToList();
+                    gridWords.DataSource = words;
+
+                    // 2) Noktalama çoktan aza
+                    var punc = res.PunctuationCounts
+                                  .OrderByDescending(kv => kv.Value)
+                                  .Select(kv => new PuncItem { Symbol = kv.Key, Count = kv.Value })
+                                  .ToList();
+                    gridPunc.DataSource = punc;
+
                     _logger.LogInformation("Dosya başarıyla analiz edildi: {File}", dlg.FileName);
-
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Dosya analizi sırasında hata oluştu: {File}", dlg.FileName);
-                    MessageBox.Show($"Dosya analizi sırasında hata oluştu: {ex.Message}", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Dosya analizi sırasında hata oluştu: {ex.Message}",
+                                    "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
@@ -100,8 +137,13 @@ namespace FileAnalyzerWithForm
                     UseWaitCursor = false;
                 }
             }
-
         }
+        private class PuncItem
+        {
+            public string Symbol { get; set; }
+            public int Count { get; set; }
+        }
+
 
         private string BuildFilter(string ext)
         {
