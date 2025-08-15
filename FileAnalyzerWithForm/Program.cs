@@ -20,12 +20,12 @@ namespace FileAnalyzerWithForm
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var logsDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+            var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
             Directory.CreateDirectory(logsDir);
 
             Log.Logger = new LoggerConfiguration()
               .MinimumLevel.Information()
-              .WriteTo.File(Path.Combine(logsDir, "app-txt"),
+              .WriteTo.File(Path.Combine(logsDir, "app-.txt"),
                             rollingInterval: RollingInterval.Day,
                             retainedFileCountLimit: 7,
                             shared: true)
@@ -35,12 +35,40 @@ namespace FileAnalyzerWithForm
             {
                 builder.AddSerilog(dispose: true);
             });
+            //var mainLogger = loggerFactory.CreateLogger<MainForm>();
+            //Application.Run(new MainForm(mainLogger, loggerFactory));
+            //Microsoft.Extensions.Logging.ILogger appLogger = loggerFactory.CreateLogger("Program");
+            //appLogger.LogInformation("Uygulama başladı.");
 
-            Microsoft.Extensions.Logging.ILogger appLogger = loggerFactory.CreateLogger("Program");
+            // ... loggerFactory kurulduktan hemen sonra ekle:
+            var appLogger = loggerFactory.CreateLogger("Program");
             appLogger.LogInformation("Uygulama başladı.");
-            // MainForm'a logger ve factory ver
+
+            // 1) LOGIN ÖNCE
+            // A) LoginForm'un parametresiz ctor'u varsa:
+            using (var login = new LoginForm())
+            {
+                if (login.ShowDialog() != DialogResult.OK)
+                {
+                    Log.CloseAndFlush();
+                    return; // iptal -> uygulamadan çık
+                }
+            }
+
+            // // B) LoginForm logger istiyorsa (böyleyse A'yı sil, bunu aç):
+            // using (var login = new LoginForm(loggerFactory.CreateLogger<LoginForm>()))
+            // {
+            //     if (login.ShowDialog() != DialogResult.OK)
+            //     {
+            //         Log.CloseAndFlush();
+            //         return;
+            //     }
+            // }
+
+            // 2) LOGIN OK => MainForm
             var mainLogger = loggerFactory.CreateLogger<MainForm>();
             Application.Run(new MainForm(mainLogger, loggerFactory));
+
 
             Log.CloseAndFlush();
 
