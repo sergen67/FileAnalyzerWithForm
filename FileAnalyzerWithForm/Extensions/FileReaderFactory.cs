@@ -1,4 +1,4 @@
-﻿using FileAnalyzer_.Reader;
+﻿using FileAnalyzer_.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;

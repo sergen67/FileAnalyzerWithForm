@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace FileAnalyzerWithForm.Auth
 {
-    public class ILoginService : IUserService
+    public class LoginService : IUserService
     {
         private readonly ILogger _logger;
 
-        public ILoginService() { }
-        public ILoginService(ILogger<ILoginService> logger) { _logger = logger; }
+        public LoginService() { }
+        public LoginService(ILogger<LoginService> logger) { _logger = logger; }
 
         public bool TryRegister(string username, string password, out string error)
         {

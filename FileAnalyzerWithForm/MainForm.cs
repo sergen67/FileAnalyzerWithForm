@@ -1,10 +1,14 @@
-﻿using FileAnalyzerWithForm.Reader;
+﻿
 using Microsoft.Extensions.Logging;
 using Serilog.Core;
 using System;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using FileAnalyzerWithForm.Models;
+using FileAnalyzerWithForm.Extensions;
+using FileAnalyzerWithForm.Reader;
+
 
 
 namespace FileAnalyzerWithForm
@@ -20,7 +24,7 @@ namespace FileAnalyzerWithForm
 
             btnUpload.Enabled = false;
             gridWords.AutoGenerateColumns = false;
-           
+
 
             _logger = mainLogger ?? throw new ArgumentNullException(nameof(mainLogger));
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
@@ -33,7 +37,7 @@ namespace FileAnalyzerWithForm
 
             using (var dlg = new OpenFileDialog
             {
-                Filter = BuildFilter(ext),
+                Filter = StringExtExtension.BuildFilter(ext),
                 Title = $"{ext} dosyası seçiniz",
                 DefaultExt = ext.ToLowerInvariant(),   // "txt" / "docx" / "pdf"
                 CheckFileExists = true,
@@ -82,27 +86,6 @@ namespace FileAnalyzerWithForm
                     cboType.Enabled = true;
                     UseWaitCursor = false;
                 }
-            }
-        }
-        private class PuncItem
-        {
-            public string Symbol { get; set; }
-            public int Count { get; set; }
-        }
-
-
-        private string BuildFilter(string ext)
-        {
-            switch ((ext ?? "").ToLowerInvariant())
-            {
-                case "txt":
-                    return "Metin Dosyaları (*.txt)|*.txt";
-                case "docx":
-                    return "Word Belgeleri (*.docx)|*.docx";
-                case "pdf":
-                    return "PDF Dosyaları (*.pdf)|*.pdf";
-                default:
-                    return "Tüm Dosyalar (*.*)|*.*";
             }
         }
 

@@ -39,7 +39,7 @@ namespace FileAnalyzerWithForm
                     db.Database.Initialize(false);
                 }
 
-                var userService = new ILoginService();
+                var userService = new LoginService();
 
                 
                 using (var login = new LoginForm(userService, loggerFactory.CreateLogger<LoginForm>()))

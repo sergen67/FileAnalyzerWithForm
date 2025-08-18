@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace FileAnalyzer_.Reader
+namespace FileAnalyzer_.Extensions
 {
     public class DocxFileReader : IFileReader
     {

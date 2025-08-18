@@ -4,15 +4,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FileAnalyzerWithForm.Auth
 {
-    // Tablonun gerçek adı ve şeması
-    [Table("Users", Schema = "dbo")]  // örn: dbo.Users
+ 
+    [Table("Users", Schema = "dbo")]  
     public class UserRecord
     {
         [Key]
        
 
         [Required, MaxLength(100)]
-        [Column("UserName")]           // kullanıcı adı sütun adın
+        [Column("UserName")]         
         public string Username { get; set; }
 
         [Column("Password")]
