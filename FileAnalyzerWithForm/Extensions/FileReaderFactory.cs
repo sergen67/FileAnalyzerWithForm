@@ -1,4 +1,5 @@
 ﻿using FileAnalyzer_.Extensions;
+using FileAnalyzerWithForm.Consts;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -12,11 +13,11 @@ namespace FileAnalyzerWithForm.Reader
             var ext = Path.GetExtension(path).ToLowerInvariant();
             switch (ext)
             {
-                case ".txt":
+                case FileExtensions.Txt:
                     return new TxtFileReader(loggerFactory.CreateLogger<TxtFileReader>());
-                case ".docx":
+                case FileExtensions.Docx:
                     return new DocxFileReader(loggerFactory.CreateLogger<DocxFileReader>());
-                case ".pdf":
+                case FileExtensions.Pdf:
                     return new PdfFileReader(loggerFactory.CreateLogger<PdfFileReader>());
                 default:
                     throw new NotSupportedException($"Unsupported extension: {ext}");

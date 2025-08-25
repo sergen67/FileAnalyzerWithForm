@@ -3,7 +3,6 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using FileAnalyzerWithForm;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Text;
 
 namespace FileAnalyzer_.Extensions
@@ -21,13 +20,11 @@ namespace FileAnalyzer_.Extensions
 
                 using (var word = WordprocessingDocument.Open(filePath, false))
                 {
-                    // Ana gövde
                     var body = word.MainDocumentPart?.Document?.Body;
                     if (body != null)
                         foreach (var p in body.Elements<Paragraph>())
                             sb.AppendLine(p.InnerText);
 
-                    // Header/Footer (varsa)
                     foreach (var hp in word.MainDocumentPart.HeaderParts)
                         foreach (var p in hp.RootElement.Descendants<Paragraph>())
                             sb.AppendLine(p.InnerText);

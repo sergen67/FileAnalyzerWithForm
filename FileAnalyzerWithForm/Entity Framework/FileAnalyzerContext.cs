@@ -6,7 +6,6 @@ namespace FileAnalyzerWithForm.Auth
     {
         static FileAnalyzerContext()
         {
-
             Database.SetInitializer<FileAnalyzerContext>(null);
         }
 

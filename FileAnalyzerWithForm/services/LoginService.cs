@@ -29,7 +29,7 @@ namespace FileAnalyzerWithForm.Auth
                     db.Users.Add(new UserRecord
                     {
                         Username = username,
-                        Password = password   
+                        Password = password
                     });
                     db.SaveChanges();
                 }
@@ -52,7 +52,7 @@ namespace FileAnalyzerWithForm.Auth
             {
                 using (var db = new FileAnalyzerContext())
                 {
-                   
+
                     var ok = db.Users.Any(u => u.Username == username && u.Password == password);
                     if (!ok) _logger?.LogWarning("Login FAIL: {User}", username);
                     else _logger?.LogInformation("Login OK: {User}", username);

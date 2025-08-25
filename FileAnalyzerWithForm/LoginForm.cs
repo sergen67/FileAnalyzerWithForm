@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
-using FileAnalyzerWithForm.Auth;  // IUserService / EfUserService burada
+using FileAnalyzerWithForm.Auth;
 
 namespace FileAnalyzerWithForm
 {
@@ -15,12 +15,12 @@ namespace FileAnalyzerWithForm
 
         public LoginForm(IUserService users, ILogger<LoginForm> logger)
         {
-            InitializeComponent(); 
+            InitializeComponent();
 
             _users = users ?? throw new ArgumentNullException(nameof(users));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-         
+
             txtPassword.UseSystemPasswordChar = true;
             AcceptButton = btnLogin;
             lblMsg.Text = string.Empty;

@@ -17,7 +17,7 @@ namespace FileAnalyzerWithForm.Reader
             try
             {
                 var sb = new StringBuilder();
-                using(var pdf = PdfDocument.Open(filePath))
+                using (var pdf = PdfDocument.Open(filePath))
                 {
                     foreach (var page in pdf.GetPages())
                     {
@@ -30,7 +30,7 @@ namespace FileAnalyzerWithForm.Reader
             catch (Exception ex)
             {
                 _logger.LogError(ex, "PDF okunamadı: {File}", filePath);
-                throw; 
+                throw;
             }
         }
     }

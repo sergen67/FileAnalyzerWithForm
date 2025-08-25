@@ -1,4 +1,6 @@
-﻿namespace FileAnalyzerWithForm.Extensions
+﻿using FileAnalyzerWithForm.Consts;
+
+namespace FileAnalyzerWithForm.Extensions
 {
     public static class StringExtExtension
     {
@@ -6,11 +8,11 @@
         {
             switch ((ext ?? "").ToLowerInvariant())
             {
-                case "txt":
+                case FileExtensions.Txt:
                     return "Metin Dosyaları (*.txt)|*.txt";
-                case "docx":
+                case FileExtensions.Docx:
                     return "Word Belgeleri (*.docx)|*.docx";
-                case "pdf":
+                case FileExtensions.Pdf:
                     return "PDF Dosyaları (*.pdf)|*.pdf";
                 default:
                     return "Tüm Dosyalar (*.*)|*.*";

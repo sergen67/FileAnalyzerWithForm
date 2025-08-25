@@ -34,7 +34,7 @@ namespace FileAnalyzerWithForm.Reader
                 var w = m.Value;
                 if (!StopWords.Contains(w)) words.Add(w);
             }
-          
+
 
             int MinFreq = 2;
             var freqList = words

@@ -1,6 +1,5 @@
 ﻿
 using Microsoft.Extensions.Logging;
-using Serilog.Core;
 using System;
 using System.Data;
 using System.Linq;
@@ -8,8 +7,6 @@ using System.Windows.Forms;
 using FileAnalyzerWithForm.Models;
 using FileAnalyzerWithForm.Extensions;
 using FileAnalyzerWithForm.Reader;
-
-
 
 namespace FileAnalyzerWithForm
 {
@@ -21,10 +18,8 @@ namespace FileAnalyzerWithForm
         {
             InitializeComponent();
 
-
-            btnUpload.Enabled = false;
+            btnUpload.Enabled = false;""
             gridWords.AutoGenerateColumns = false;
-
 
             _logger = mainLogger ?? throw new ArgumentNullException(nameof(mainLogger));
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));

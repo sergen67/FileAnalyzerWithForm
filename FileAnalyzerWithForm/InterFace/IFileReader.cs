@@ -1,4 +1,4 @@
-﻿namespace   FileAnalyzerWithForm
+﻿namespace FileAnalyzerWithForm
 {
     public interface IFileReader
     {

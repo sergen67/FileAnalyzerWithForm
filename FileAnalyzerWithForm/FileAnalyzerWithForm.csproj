@@ -154,6 +154,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Consts\ExtensionEnum.cs" />
     <Compile Include="Extensions\StringExtExtension.cs" />
     <Compile Include="Models\PuncItem.cs" />
     <Compile Include="services\LoginService.cs" />
