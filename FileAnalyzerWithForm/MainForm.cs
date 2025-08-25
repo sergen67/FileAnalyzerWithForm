@@ -18,7 +18,7 @@ namespace FileAnalyzerWithForm
         {
             InitializeComponent();
 
-            btnUpload.Enabled = false;""
+            btnUpload.Enabled = false;
             gridWords.AutoGenerateColumns = false;
 
             _logger = mainLogger ?? throw new ArgumentNullException(nameof(mainLogger));
