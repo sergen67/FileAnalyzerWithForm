@@ -28,15 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.cboType = new System.Windows.Forms.ComboBox();
             this.btnUpload = new System.Windows.Forms.Button();
             this.gridWords = new System.Windows.Forms.DataGridView();
+            this.colWord = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colCounts = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.gridPunc = new System.Windows.Forms.DataGridView();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.colWord = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colCounts = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.gridWords)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridPunc)).BeginInit();
@@ -84,6 +86,23 @@
             this.gridWords.Size = new System.Drawing.Size(427, 191);
             this.gridWords.TabIndex = 2;
             // 
+            // colWord
+            // 
+            this.colWord.DataPropertyName = "Word";
+            this.colWord.HeaderText = "Kelime";
+            this.colWord.Name = "colWord";
+            this.colWord.ReadOnly = true;
+            // 
+            // colCounts
+            // 
+            this.colCounts.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colCounts.DataPropertyName = "Count";
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.colCounts.DefaultCellStyle = dataGridViewCellStyle4;
+            this.colCounts.HeaderText = "Sayı";
+            this.colCounts.Name = "colCounts";
+            this.colCounts.ReadOnly = true;
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
@@ -128,22 +147,23 @@
             this.dataGridView1.Size = new System.Drawing.Size(2, 191);
             this.dataGridView1.TabIndex = 3;
             // 
-            // colWord
+            // btnExport
             // 
-            this.colWord.DataPropertyName = "Word";
-            this.colWord.HeaderText = "Kelime";
-            this.colWord.Name = "colWord";
-            this.colWord.ReadOnly = true;
+            this.btnExport.Location = new System.Drawing.Point(12, 361);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(75, 23);
+            this.btnExport.TabIndex = 5;
+            this.btnExport.Text = "Export";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
             // 
-            // colCounts
+            // progressBar1
             // 
-            this.colCounts.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.colCounts.DataPropertyName = "Count";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.colCounts.DefaultCellStyle = dataGridViewCellStyle1;
-            this.colCounts.HeaderText = "Sayı";
-            this.colCounts.Name = "colCounts";
-            this.colCounts.ReadOnly = true;
+            this.progressBar1.Location = new System.Drawing.Point(165, 19);
+            this.progressBar1.MarqueeAnimationSpeed = 1;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(100, 23);
+            this.progressBar1.TabIndex = 6;
             // 
             // MainForm
             // 
@@ -151,12 +171,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DarkSeaGreen;
             this.ClientSize = new System.Drawing.Size(768, 396);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.btnExport);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.btnUpload);
             this.Controls.Add(this.cboType);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Ana Sayfa";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.gridWords)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridPunc)).EndInit();
@@ -175,5 +198,7 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn colWord;
         private System.Windows.Forms.DataGridViewTextBoxColumn colCounts;
+        private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

@@ -6,6 +6,11 @@ namespace FileAnalyzerWithForm.Extensions
     {
         public static string BuildFilter(this string ext)
         {
+            var key = (ext ?? "")
+                      .Trim()
+                      .TrimStart('.')         // ".TXT" -> "TXT"
+                      .ToLowerInvariant();    // "TXT" -> "txt"
+
             switch ((ext ?? "").ToLowerInvariant())
             {
                 case FileExtensions.Txt:
