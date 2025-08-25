@@ -10,7 +10,12 @@ namespace FileAnalyzerWithForm.Reader
     {
         public static IFileReader Create(string path, ILoggerFactory loggerFactory)
         {
-            var ext = Path.GetExtension(path).ToLowerInvariant();
+            var ext = (Path.GetExtension(path) ?? string.Empty)
+                    .Trim()
+                    .TrimStart('.')        // ".PDF" -> "PDF"
+                    .ToLowerInvariant();   // "PDF"  -> "pdf"
+
+           
             switch (ext)
             {
                 case FileExtensions.Txt:

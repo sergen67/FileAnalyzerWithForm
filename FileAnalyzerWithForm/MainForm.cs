@@ -51,33 +51,21 @@ namespace FileAnalyzerWithForm
                     btnUpload.Enabled = false;
                     cboType.Enabled = false;
 
-                    var fileExt = System.IO.Path.GetExtension(dlg.FileName);
-                    bool isTxt = string.Equals(fileExt, ".txt", StringComparison.OrdinalIgnoreCase);
+                    // >>> tüm türlerde aynı: marquee açık
+                    SetProgressVisible(true, marquee: true);
 
-                    string content;
+                    var reader = FileReaderFactory.Create(dlg.FileName, _loggerFactory);
 
-                    if (isTxt)
-                    {
-                        SetProgressVisible(true, marquee: false); 
-                        var progress = new Progress<int>(v => SetProgressValue(v));
-                        content = await ReadTextFileWithProgressAsync(dlg.FileName, progress);
-
-                        SetProgressVisible(true, marquee: true);
-                    }
-                    else
-                    {
-                        SetProgressVisible(true, marquee: true);  
-                        var reader = FileReaderFactory.Create(dlg.FileName, _loggerFactory);
-                        content = await Task.Run(() => reader.ReadContent(dlg.FileName) ?? string.Empty);
-                    }
-
+                    // IO ve analiz CPU işini UI dışına at
+                    string content = await Task.Run(() => reader.ReadContent(dlg.FileName) ?? string.Empty);
                     var res = await Task.Run(() => TextAnalyzer.Analyze(content));
 
-   
-                    var words = res.TopWords.Where(w => w.Count >= 2)
-                                            .OrderByDescending(w => w.Count)
-                                            .ThenBy(w => w.Word)
-                                            .ToList();
+                    // Grid'leri doldur (senin mevcut bağlama şeklinle)
+                    var words = res.TopWords
+                                   .Where(w => w.Count >= 2)
+                                   .OrderByDescending(w => w.Count)
+                                   .ThenBy(w => w.Word)
+                                   .ToList();
                     gridWords.DataSource = words;
 
                     var punc = res.PunctuationCounts
@@ -85,6 +73,8 @@ namespace FileAnalyzerWithForm
                                   .Select(kv => new { Symbol = kv.Key, Count = kv.Value })
                                   .ToList();
                     gridPunc.DataSource = punc;
+
+                    _logger.LogInformation("Analiz OK: {File}", dlg.FileName);
                 }
                 catch (Exception ex)
                 {
@@ -178,13 +168,7 @@ namespace FileAnalyzerWithForm
             return mustQuote ? $"\"{s}\"" : s;
         }
 
-        private void showProgress(bool show, bool marquee = false)
-        {
-            progressBar1.Visible = show;
-            if (!show) { progressBar1.Value = 0; progressBar1.Style = ProgressBarStyle.Blocks; return; }
-            progressBar1.Style = marquee ? ProgressBarStyle.Marquee : ProgressBarStyle.Blocks;
-            if (!marquee) progressBar1.MarqueeAnimationSpeed = 30;
-        }
+      
         private async Task<string> ReadTextFileWithProgressAsync(string path, IProgress<int> progress)
         {
             // TXT için yüzde ilerleme (yaklaşık). Büyük dosyalarda UI donmaz.
